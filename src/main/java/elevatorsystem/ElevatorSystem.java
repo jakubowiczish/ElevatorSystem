@@ -27,7 +27,16 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
+    void pickup(int elevatorId, int floorNumber, int destinationOffset) {
+        elevators.get(elevatorId).pickup(floorNumber, destinationOffset);
+    }
+
     void printElevators() {
         elevators.forEach(e -> System.out.println(e));
     }
+
+    void step() {
+
+    }
+
 }

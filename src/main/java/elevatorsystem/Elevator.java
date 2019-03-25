@@ -41,6 +41,17 @@ class Elevator {
         return new ElevatorStatus();
     }
 
+    public void pickup(int floorNumber, int destinationOffset) {
+        addDestination(floorNumber);
+        addDestination(floorNumber + destinationOffset);
+    }
+
+    public void addDestination(int destinationLevel) {
+        if (!destinationLevels.contains(destinationLevel)) {
+            destinationLevels.addLast(destinationLevel);
+        }
+    }
+
     class ElevatorStatus {
         int elevatorId;
         int currentLevel;
