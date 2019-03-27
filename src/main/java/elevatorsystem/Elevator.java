@@ -31,12 +31,15 @@ class Elevator {
         if (destinationLevels.size() == 0) return;
 
         if (getDirection() == Direction.DOWN) {
+            System.out.println("Elevator: " + elevatorId + " moves down");
             --currentLevel;
         } else if (getDirection() == Direction.UP) {
+            System.out.println("Elevator: " + elevatorId + " moves up");
             ++currentLevel;
         }
 
         if (currentLevel == destinationLevels.getFirst()) {
+            System.out.println("Destination reached for elevator: " + elevatorId);
             destinationLevels.removeFirst();
         }
     }
@@ -59,9 +62,9 @@ class Elevator {
 
         if (getDirection() == Direction.UP) {
             Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-            LinkedList<Integer> increasingSubList = (LinkedList<Integer>) destinationLevels.subList(
+            LinkedList<Integer> increasingSubList = new LinkedList<>(destinationLevels.subList(
                     increasingBounds.getFirst(), increasingBounds.getSecond()
-            );
+            ));
 
             if (isBetweenBounds(increasingBounds, floor)) {
                 if (!increasingSubList.contains(floor)) {
@@ -78,9 +81,9 @@ class Elevator {
 
         } else if (getDirection() == Direction.DOWN) {
             Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
-            LinkedList<Integer> decreasingSubList = (LinkedList<Integer>) destinationLevels.subList(
+            LinkedList<Integer> decreasingSubList = new LinkedList<>(destinationLevels.subList(
                     decreasingBounds.getFirst(), decreasingBounds.getSecond()
-            );
+            ));
 
             if (isBetweenBounds(decreasingBounds, floor)) {
                 if (!decreasingSubList.contains(floor)) {
@@ -127,9 +130,9 @@ class Elevator {
 
         } else if (getDirection() == Direction.DOWN) {
             Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
-            LinkedList<Integer> decreasingSubList = (LinkedList<Integer>) levels.subList(
+            LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
                     decreasingBounds.getFirst(), decreasingBounds.getSecond()
-            );
+            ));
 
             if (isBetweenBounds(decreasingBounds, floor)) {
                 if (!decreasingSubList.contains(floor)) {
