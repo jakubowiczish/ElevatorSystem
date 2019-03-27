@@ -29,7 +29,7 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
-    Pair<Integer, Integer> getElevatorAndItsOffset(int floor) {
+    Pair<Integer, Integer> getElevatorAndTime(int floor) {
         int result = Integer.MAX_VALUE;
         int elevatorId = -1;
         for (Elevator elevator : elevators) {
@@ -42,11 +42,16 @@ public class ElevatorSystem {
         return new Pair<>(elevatorId, result);
     }
 
-    void pickup(int floorNumber) {
-        Pair<Integer, Integer> bestElevator = getElevatorAndItsOffset(floorNumber);
+    void pickup(int floorNumber, int offset) {
+        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floorNumber);
         int elevatorId = bestElevator.getFirst();
-        int bestOffset = bestElevator.getSecond();
-        elevators.get(elevatorId).pickup(floorNumber, bestOffset);
+        for (Elevator elevator : elevators) {
+            if (elevator.getElevatorId() == elevatorId) {
+                elevator.realPickup(floorNumber);
+            }
+        }
+
+        elevators.get(elevatorId).pickup(floorNumber, offset);
         System.out.println("Elevator for pickup: " + elevatorId);
     }
 

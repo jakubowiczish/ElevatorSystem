@@ -34,7 +34,10 @@ public class App {
             if (activityName.equals("pickup")) {
                 System.out.println("Enter the floor for pickup:");
                 int pickupFloor = scanner.nextInt();
-                elevatorSystem.pickup(pickupFloor);
+                System.out.println("Enter the direction e.g -2 for 2 floors down, 3 for 3 floors up");
+                int direction = scanner.nextInt();
+
+                elevatorSystem.pickup(pickupFloor, direction);
             }
 
             if (activityName.equals("step")) {

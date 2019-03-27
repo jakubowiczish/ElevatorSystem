@@ -27,15 +27,26 @@ class Elevator {
         return new ElevatorStatus();
     }
 
+    int getDirection() {
+        if (destinationLevels.size() == 0) {
+            return 0;
+        }
+        if (currentLevel - destinationLevels.getFirst() < 0) {
+            return 1;
+        }
+
+        return -1;
+    }
+
     public void step() {
         if (destinationLevels.size() == 0) return;
 
-        if (getDirection() == Direction.DOWN) {
-            System.out.println("Elevator: " + elevatorId + " moves down");
+        if (getDirection() == -1) {
             --currentLevel;
-        } else if (getDirection() == Direction.UP) {
-            System.out.println("Elevator: " + elevatorId + " moves up");
+            System.out.println("Elevator " + elevatorId + " moves down, now on " + currentLevel + " floor");
+        } else if (getDirection() == 1) {
             ++currentLevel;
+            System.out.println("Elevator " + elevatorId + " moves up, now on " + currentLevel + " floor");
         }
 
         if (currentLevel == destinationLevels.getFirst()) {
@@ -56,17 +67,17 @@ class Elevator {
     }
 
     int realPickup(int floor) {
-        if (getDirection() == Direction.NONE) {
+        if (getDirection() == 0) {
             return getFloorDifference(floor, currentLevel);
         }
 
-        if (getDirection() == Direction.UP) {
-            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-            LinkedList<Integer> increasingSubList = new LinkedList<>(destinationLevels.subList(
-                    increasingBounds.getFirst(), increasingBounds.getSecond()
-            ));
+        if (getDirection() == 1) {
+            Pair<Integer, Integer> increasingBounds = getBounds(1);
 
             if (isBetweenBounds(increasingBounds, floor)) {
+                LinkedList<Integer> increasingSubList = new LinkedList<>(destinationLevels.subList(
+                        increasingBounds.getFirst(), increasingBounds.getSecond()
+                ));
                 if (!increasingSubList.contains(floor)) {
                     for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
                         if (destinationLevels.get(i) > floor) {
@@ -79,13 +90,13 @@ class Elevator {
                 destinationLevels.add(increasingBounds.getSecond() + 1, floor);
             }
 
-        } else if (getDirection() == Direction.DOWN) {
-            Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
-            LinkedList<Integer> decreasingSubList = new LinkedList<>(destinationLevels.subList(
-                    decreasingBounds.getFirst(), decreasingBounds.getSecond()
-            ));
+        } else if (getDirection() == -1) {
+            Pair<Integer, Integer> decreasingBounds = getBounds(-1);
 
             if (isBetweenBounds(decreasingBounds, floor)) {
+                LinkedList<Integer> decreasingSubList = new LinkedList<>(destinationLevels.subList(
+                        decreasingBounds.getFirst(), decreasingBounds.getSecond()
+                ));
                 if (!decreasingSubList.contains(floor)) {
                     for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
                         if (destinationLevels.get(i) < floor) {
@@ -99,23 +110,24 @@ class Elevator {
             }
         }
 
-        return destinationLevels.get(floor);
+        return destinationLevels.indexOf(floor);
     }
 
     int timeToPickup(int floor) {
-        if (getDirection() == Direction.NONE) {
+        if (getDirection() == 0) {
             return getFloorDifference(floor, currentLevel);
         }
 
         LinkedList<Integer> levels = destinationLevels;
 
-        if (getDirection() == Direction.UP) {
-            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-            LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
-                    increasingBounds.getFirst(), increasingBounds.getSecond())
-            );
+        if (getDirection() == 1) {
+            Pair<Integer, Integer> increasingBounds = getBounds(1);
+
 
             if (isBetweenBounds(increasingBounds, floor)) {
+                LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
+                        increasingBounds.getFirst(), increasingBounds.getSecond())
+                );
                 if (!increasingSubList.contains(floor)) {
                     for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
                         if (levels.get(i) > floor) {
@@ -128,13 +140,14 @@ class Elevator {
                 levels.add(increasingBounds.getSecond() + 1, floor);
             }
 
-        } else if (getDirection() == Direction.DOWN) {
-            Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
-            LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
-                    decreasingBounds.getFirst(), decreasingBounds.getSecond()
-            ));
+        } else if (getDirection() == -1) {
+            Pair<Integer, Integer> decreasingBounds = getBounds(-1);
+
 
             if (isBetweenBounds(decreasingBounds, floor)) {
+                LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
+                        decreasingBounds.getFirst(), decreasingBounds.getSecond()
+                ));
                 if (!decreasingSubList.contains(floor)) {
                     for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
                         if (levels.get(i) < floor) {
@@ -148,7 +161,7 @@ class Elevator {
             }
         }
 
-        return levels.get(floor);
+        return levels.indexOf(floor);
     }
 
     private int getFloorDifference(int floor, int currentLevel) {
@@ -163,8 +176,8 @@ class Elevator {
         return false;
     }
 
-    private Pair<Integer, Integer> getBounds(Direction direction) {
-        int startIndex = -1, endIndex = -1;
+    private Pair<Integer, Integer> getBounds(int direction) {
+        int startIndex = destinationLevels.size() - 1, endIndex = destinationLevels.size() - 1;
         boolean isRising = false;
         boolean isDecreasing = false;
 
@@ -173,7 +186,7 @@ class Elevator {
             int previous = destinationLevels.get(i - 1);
             int actual = destinationLevels.get(i);
 
-            if (direction == Direction.UP) {
+            if (direction == 1) {
                 if (actual > previous) {
                     if (!isRising) {
                         startIndex = i - 1;
@@ -183,7 +196,7 @@ class Elevator {
                     endIndex = i - 1;
                     break;
                 }
-            } else if (direction == Direction.DOWN) {
+            } else if (direction == -1) {
                 if (actual < previous) {
                     if (!isDecreasing) {
                         startIndex = i - 1;
@@ -195,7 +208,6 @@ class Elevator {
                 }
             }
         }
-        if (endIndex == -1) endIndex = destinationLevels.size();
 
         return new Pair<>(startIndex, endIndex);
     }
@@ -226,17 +238,6 @@ class Elevator {
         }
     }
 
-    private Direction getDirection() {
-        if (destinationLevels.size() == 0) return Direction.NONE;
-        if (currentLevel > destinationLevels.getFirst()) return Direction.DOWN;
-        return Direction.UP;
-    }
-
-    enum Direction {
-        UP,
-        DOWN,
-        NONE
-    }
 
     @Override
     public String toString() {
