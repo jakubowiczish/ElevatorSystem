@@ -55,24 +55,112 @@ class Elevator {
         }
     }
 
-    int timeToPickup(int floor) {
+    int realPickup(int floor) {
         if (getDirection() == Direction.NONE) {
-            return Math.abs(currentLevel - floor);
+            return getFloorDifference(floor, currentLevel);
         }
 
         if (getDirection() == Direction.UP) {
             Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-            for (int i = 0; i < destinationLevels.size(); ++i) {
+            LinkedList<Integer> increasingSubList = (LinkedList<Integer>) destinationLevels.subList(
+                    increasingBounds.getFirst(), increasingBounds.getSecond()
+            );
 
+            if (isBetweenBounds(increasingBounds, floor)) {
+                if (!increasingSubList.contains(floor)) {
+                    for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
+                        if (destinationLevels.get(i) > floor) {
+                            destinationLevels.add(i, floor);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                destinationLevels.add(increasingBounds.getSecond() + 1, floor);
             }
 
         } else if (getDirection() == Direction.DOWN) {
             Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
+            LinkedList<Integer> decreasingSubList = (LinkedList<Integer>) destinationLevels.subList(
+                    decreasingBounds.getFirst(), decreasingBounds.getSecond()
+            );
 
+            if (isBetweenBounds(decreasingBounds, floor)) {
+                if (!decreasingSubList.contains(floor)) {
+                    for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
+                        if (destinationLevels.get(i) < floor) {
+                            destinationLevels.add(i, floor);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                destinationLevels.add(decreasingBounds.getSecond() + 1, floor);
+            }
         }
 
+        return destinationLevels.get(floor);
+    }
 
-        return destinationLevels.indexOf(floor);
+    int timeToPickup(int floor) {
+        if (getDirection() == Direction.NONE) {
+            return getFloorDifference(floor, currentLevel);
+        }
+
+        LinkedList<Integer> levels = destinationLevels;
+
+        if (getDirection() == Direction.UP) {
+            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
+            LinkedList<Integer> increasingSubList = (LinkedList<Integer>) levels.subList(
+                    increasingBounds.getFirst(), increasingBounds.getSecond()
+            );
+
+            if (isBetweenBounds(increasingBounds, floor)) {
+                if (!increasingSubList.contains(floor)) {
+                    for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
+                        if (levels.get(i) > floor) {
+                            levels.add(i, floor);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                levels.add(increasingBounds.getSecond() + 1, floor);
+            }
+
+        } else if (getDirection() == Direction.DOWN) {
+            Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
+            LinkedList<Integer> decreasingSubList = (LinkedList<Integer>) levels.subList(
+                    decreasingBounds.getFirst(), decreasingBounds.getSecond()
+            );
+
+            if (isBetweenBounds(decreasingBounds, floor)) {
+                if (!decreasingSubList.contains(floor)) {
+                    for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
+                        if (levels.get(i) < floor) {
+                            levels.add(i, floor);
+                            break;
+                        }
+                    }
+                }
+            } else {
+                levels.add(decreasingBounds.getSecond() + 1, floor);
+            }
+        }
+
+        return levels.get(floor);
+    }
+
+    private int getFloorDifference(int floor, int currentLevel) {
+        return Math.abs(floor - currentLevel);
+    }
+
+    private boolean isBetweenBounds(Pair<Integer, Integer> bounds, int floor) {
+        if (floor > destinationLevels.get(bounds.getFirst())
+                && floor < destinationLevels.get(bounds.getSecond())) {
+            return true;
+        }
+        return false;
     }
 
     private Pair<Integer, Integer> getBounds(Direction direction) {

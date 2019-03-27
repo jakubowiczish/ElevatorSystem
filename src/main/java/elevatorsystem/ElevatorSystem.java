@@ -1,5 +1,7 @@
 package elevatorsystem;
 
+import elevatorsystem.model.Pair;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,10 +29,23 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
-//    void pickup(int floorNumber, int destinationOffset) {
-//
-//        elevators.get(elevatorId).pickup(floorNumber, destinationOffset);
-//    }
+    Pair<Integer, Integer> getElevatorAndItsOffset(int floor) {
+        int result = Integer.MAX_VALUE;
+        int elevatorId = -1;
+        for (Elevator elevator : elevators) {
+            int pickupTime = elevator.timeToPickup(floor);
+            if (pickupTime < result) {
+                result = pickupTime;
+                elevatorId = elevator.getElevatorId();
+            }
+        }
+        return new Pair<>(elevatorId, result);
+    }
+
+    void pickup(int floorNumber) {
+        Pair<Integer, Integer> bestElevator = getElevatorAndItsOffset(floorNumber);
+        elevators.get(bestElevator.getFirst()).pickup(floorNumber, bestElevator.getSecond());
+    }
 
     void printElevators() {
         elevators.forEach(e -> System.out.println(e));
