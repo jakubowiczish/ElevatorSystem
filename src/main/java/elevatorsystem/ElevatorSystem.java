@@ -44,7 +44,10 @@ public class ElevatorSystem {
 
     void pickup(int floorNumber) {
         Pair<Integer, Integer> bestElevator = getElevatorAndItsOffset(floorNumber);
-        elevators.get(bestElevator.getFirst()).pickup(floorNumber, bestElevator.getSecond());
+        int elevatorId = bestElevator.getFirst();
+        int bestOffset = bestElevator.getSecond();
+        elevators.get(elevatorId).pickup(floorNumber, bestOffset);
+        System.out.println("Elevator for pickup: " + elevatorId);
     }
 
     void printElevators() {

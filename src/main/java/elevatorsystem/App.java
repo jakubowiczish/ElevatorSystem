@@ -32,7 +32,9 @@ public class App {
             }
 
             if (activityName.equals("pickup")) {
-
+                System.out.println("Enter the floor for pickup:");
+                int pickupFloor = scanner.nextInt();
+                elevatorSystem.pickup(pickupFloor);
             }
 
             if (activityName.equals("step")) {

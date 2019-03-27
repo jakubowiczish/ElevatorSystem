@@ -5,9 +5,6 @@ import elevatorsystem.model.Pair;
 import java.util.LinkedList;
 
 class Elevator {
-    public Elevator() {
-    }
-
     public Elevator(int elevatorId, int currentLevel) {
         this.elevatorId = elevatorId;
         this.currentLevel = currentLevel;
@@ -111,8 +108,8 @@ class Elevator {
 
         if (getDirection() == Direction.UP) {
             Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-            LinkedList<Integer> increasingSubList = (LinkedList<Integer>) levels.subList(
-                    increasingBounds.getFirst(), increasingBounds.getSecond()
+            LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
+                    increasingBounds.getFirst(), increasingBounds.getSecond())
             );
 
             if (isBetweenBounds(increasingBounds, floor)) {
