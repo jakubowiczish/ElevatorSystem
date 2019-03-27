@@ -10,7 +10,7 @@ public class ElevatorSystem {
         this.elevators = elevators;
     }
 
-    void update(int elevatorId, int currentLevel, int destinationLevel) {
+    void update(int elevatorId, int destinationLevel) {
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
                 elevator.getDestinationLevels().add(destinationLevel);
@@ -27,16 +27,20 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
-    void pickup(int elevatorId, int floorNumber, int destinationOffset) {
-        elevators.get(elevatorId).pickup(floorNumber, destinationOffset);
-    }
+//    void pickup(int floorNumber, int destinationOffset) {
+//
+//        elevators.get(elevatorId).pickup(floorNumber, destinationOffset);
+//    }
 
     void printElevators() {
         elevators.forEach(e -> System.out.println(e));
     }
 
-    void step() {
-
+    void printStatus() {
+        System.out.println(status());
     }
 
+    void step() {
+        elevators.forEach(e -> e.step());
+    }
 }
