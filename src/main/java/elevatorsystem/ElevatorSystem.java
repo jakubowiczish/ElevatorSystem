@@ -34,7 +34,8 @@ public class ElevatorSystem {
         int elevatorId = -1;
 
         for (Elevator elevator : elevators) {
-            int pickupTime = elevator.timeToPickup(floor);
+
+            int pickupTime = elevator.doThePickup(floor, false);
             if (pickupTime < result) {
                 result = pickupTime;
                 elevatorId = elevator.getElevatorId();
@@ -49,7 +50,7 @@ public class ElevatorSystem {
 
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
-                elevator.doThePickup(floorNumber);
+                elevator.doThePickup(floorNumber, true);
             }
         }
 

@@ -87,72 +87,18 @@ class Elevator {
         return result;
     }
 
-    int doThePickup(int floor) {
-        if (getDirection() == 0) {
-            int difference = getFloorDifference(floor, currentLevel);
-            System.out.println("Real difference: " + difference);
-            return difference;
+    int doThePickup(int floor, boolean forReal) {
+        LinkedList<Integer> levels = destinationLevels;
+
+        if (!forReal) {
+           levels = new LinkedList<>(destinationLevels);
         }
 
-        if (getDirection() == 1) {
-            Pair<Integer, Integer> increasingBounds = getBounds(1);
-
-            if (isBetweenBounds(increasingBounds, floor)) {
-                LinkedList<Integer> increasingSubList = new LinkedList<>(destinationLevels.subList(
-                        increasingBounds.getFirst(), increasingBounds.getSecond()
-                ));
-                if (!increasingSubList.contains(floor)) {
-                    for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
-                        if (destinationLevels.get(i) > floor) {
-                            addDestinationAtIndex(i, floor);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                if (currentLevel < floor) {
-                    addDestinationAtIndex(0, floor);
-                } else {
-                    addDestinationAtIndex(increasingBounds.getSecond() + 1, floor);
-                }
-            }
-
-        } else if (getDirection() == -1) {
-            Pair<Integer, Integer> decreasingBounds = getBounds(-1);
-
-            if (isBetweenBounds(decreasingBounds, floor)) {
-                LinkedList<Integer> decreasingSubList = new LinkedList<>(destinationLevels.subList(
-                        decreasingBounds.getFirst(), decreasingBounds.getSecond()
-                ));
-                if (!decreasingSubList.contains(floor)) {
-                    for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
-                        if (destinationLevels.get(i) < floor) {
-                            addDestinationAtIndex(i, floor);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                if (currentLevel < floor) {
-                    addDestinationAtIndex(0, floor);
-                } else {
-                    addDestinationAtIndex(decreasingBounds.getSecond() + 1, floor);
-                }
-            }
-        }
-        int numberOfSteps = countNumberOfSteps(floor);
-        System.out.println("Number of steps: " + numberOfSteps);
-        return numberOfSteps;
-    }
-
-    int timeToPickup(int floor) {
         if (getDirection() == 0) {
             int difference = getFloorDifference(floor, currentLevel);
             System.out.println("Difference: " + difference);
             return difference;
         }
-
-        LinkedList<Integer> levels = destinationLevels;
 
         if (getDirection() == 1) {
             Pair<Integer, Integer> increasingBounds = getBounds(1);
