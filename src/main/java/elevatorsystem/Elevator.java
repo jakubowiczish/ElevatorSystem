@@ -67,6 +67,12 @@ class Elevator {
         }
     }
 
+    private void addDestinationAtIndex(int index, int destinationLevel) {
+        if (!destinationLevels.contains(destinationLevel)) {
+            destinationLevels.add(index, destinationLevel);
+        }
+    }
+
     int countNumberOfSteps(int floor) {
         int indexOfFloor = destinationLevels.indexOf(floor);
 
@@ -98,13 +104,17 @@ class Elevator {
                 if (!increasingSubList.contains(floor)) {
                     for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
                         if (destinationLevels.get(i) > floor) {
-                            destinationLevels.add(i, floor);
+                            addDestinationAtIndex(i, floor);
                             break;
                         }
                     }
                 }
             } else {
-                destinationLevels.add(increasingBounds.getSecond() + 1, floor);
+                if (currentLevel < floor) {
+                    addDestinationAtIndex(0, floor);
+                } else {
+                    addDestinationAtIndex(increasingBounds.getSecond() + 1, floor);
+                }
             }
 
         } else if (getDirection() == -1) {
@@ -117,13 +127,17 @@ class Elevator {
                 if (!decreasingSubList.contains(floor)) {
                     for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
                         if (destinationLevels.get(i) < floor) {
-                            destinationLevels.add(i, floor);
+                            addDestinationAtIndex(i, floor);
                             break;
                         }
                     }
                 }
             } else {
-                destinationLevels.add(decreasingBounds.getSecond() + 1, floor);
+                if (currentLevel < floor) {
+                    addDestinationAtIndex(0, floor);
+                } else {
+                    addDestinationAtIndex(decreasingBounds.getSecond() + 1, floor);
+                }
             }
         }
         int numberOfSteps = countNumberOfSteps(floor);
@@ -150,13 +164,22 @@ class Elevator {
                 if (!increasingSubList.contains(floor)) {
                     for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
                         if (levels.get(i) > floor) {
-                            levels.add(i, floor);
+                            if (!levels.contains(floor)) {
+                                levels.add(i, floor);
+                            }
                             break;
                         }
                     }
                 }
+
             } else {
-                levels.add(increasingBounds.getSecond() + 1, floor);
+                if (!levels.contains(floor)) {
+                    if (currentLevel < floor) {
+                        levels.add(0, floor);
+                    } else {
+                        levels.add(increasingBounds.getSecond() + 1, floor);
+                    }
+                }
             }
 
         } else if (getDirection() == -1) {
@@ -170,13 +193,21 @@ class Elevator {
                 if (!decreasingSubList.contains(floor)) {
                     for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
                         if (levels.get(i) < floor) {
-                            levels.add(i, floor);
+                            if (!levels.contains(floor)) {
+                                levels.add(i, floor);
+                            }
                             break;
                         }
                     }
                 }
             } else {
-                levels.add(decreasingBounds.getSecond() + 1, floor);
+                if (!levels.contains(floor)) {
+                    if (currentLevel > floor) {
+                        levels.add(0, floor);
+                    } else {
+                        levels.add(decreasingBounds.getSecond() + 1, floor);
+                    }
+                }
             }
         }
         int numberOfSteps = countNumberOfSteps(floor);
@@ -236,6 +267,7 @@ class Elevator {
         int elevatorId;
         int currentLevel;
         int currentDestinationLevel;
+        LinkedList<Integer> levels;
 
         ElevatorStatus() {
             this.elevatorId = Elevator.this.elevatorId;
@@ -245,6 +277,7 @@ class Elevator {
             } else {
                 this.currentDestinationLevel = -1;
             }
+            this.levels = Elevator.this.destinationLevels;
         }
 
 
@@ -254,7 +287,8 @@ class Elevator {
                     "elevatorId=" + elevatorId +
                     ", currentLevel=" + currentLevel +
                     ", currentDestinationLevel=" + currentDestinationLevel +
-                    "}\n";
+                    ", levels=" + levels +
+                    '}';
         }
     }
 
