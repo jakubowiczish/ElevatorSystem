@@ -32,6 +32,7 @@ public class ElevatorSystem {
     Pair<Integer, Integer> getElevatorAndTime(int floor) {
         int result = Integer.MAX_VALUE;
         int elevatorId = -1;
+
         for (Elevator elevator : elevators) {
             int pickupTime = elevator.timeToPickup(floor);
             if (pickupTime < result) {
@@ -45,9 +46,10 @@ public class ElevatorSystem {
     void pickup(int floorNumber, int offset) {
         Pair<Integer, Integer> bestElevator = getElevatorAndTime(floorNumber);
         int elevatorId = bestElevator.getFirst();
+
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
-                elevator.realPickup(floorNumber);
+                elevator.doThePickup(floorNumber);
             }
         }
 

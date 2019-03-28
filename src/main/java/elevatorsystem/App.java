@@ -1,9 +1,5 @@
 package elevatorsystem;
 
-import elevatorsystem.model.Pair;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -53,7 +49,5 @@ public class App {
                 break;
             }
         }
-
     }
-
 }

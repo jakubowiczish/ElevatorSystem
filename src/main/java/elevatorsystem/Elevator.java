@@ -55,6 +55,7 @@ class Elevator {
         }
     }
 
+
     public void pickup(int floorNumber, int destinationOffset) {
         addDestination(floorNumber);
         addDestination(floorNumber + destinationOffset);
@@ -66,9 +67,25 @@ class Elevator {
         }
     }
 
-    int realPickup(int floor) {
+    int countNumberOfSteps(int floor) {
+        int indexOfFloor = destinationLevels.indexOf(floor);
+
+        int previous, actual;
+        int result = 0;
+        for (int i = 1; i < indexOfFloor; ++i) {
+            previous = destinationLevels.get(i - 1);
+            actual = destinationLevels.get(i);
+            result += Math.abs(actual - previous);
+        }
+
+        return result;
+    }
+
+    int doThePickup(int floor) {
         if (getDirection() == 0) {
-            return getFloorDifference(floor, currentLevel);
+            int difference = getFloorDifference(floor, currentLevel);
+            System.out.println("Real difference: " + difference);
+            return difference;
         }
 
         if (getDirection() == 1) {
@@ -109,20 +126,22 @@ class Elevator {
                 destinationLevels.add(decreasingBounds.getSecond() + 1, floor);
             }
         }
-
-        return destinationLevels.indexOf(floor);
+        int numberOfSteps = countNumberOfSteps(floor);
+        System.out.println("Number of steps: " + numberOfSteps);
+        return numberOfSteps;
     }
 
     int timeToPickup(int floor) {
         if (getDirection() == 0) {
-            return getFloorDifference(floor, currentLevel);
+            int difference = getFloorDifference(floor, currentLevel);
+            System.out.println("Difference: " + difference);
+            return difference;
         }
 
         LinkedList<Integer> levels = destinationLevels;
 
         if (getDirection() == 1) {
             Pair<Integer, Integer> increasingBounds = getBounds(1);
-
 
             if (isBetweenBounds(increasingBounds, floor)) {
                 LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
@@ -160,8 +179,9 @@ class Elevator {
                 levels.add(decreasingBounds.getSecond() + 1, floor);
             }
         }
-
-        return levels.indexOf(floor);
+        int numberOfSteps = countNumberOfSteps(floor);
+        System.out.println("Number of steps: " + numberOfSteps);
+        return numberOfSteps;
     }
 
     private int getFloorDifference(int floor, int currentLevel) {
