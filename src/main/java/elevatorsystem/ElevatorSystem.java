@@ -16,7 +16,7 @@ public class ElevatorSystem {
 //    void update(int elevatorId, int destinationLevel) {
 //        for (Elevator elevator : elevators) {
 //            if (elevator.getElevatorId() == elevatorId) {
-//                elevator.getLevels().add(destinationLevel);
+//                elevator.getRisingLevels().add(destinationLevel);
 //            }
 //        }
 //    }
@@ -38,11 +38,11 @@ public class ElevatorSystem {
 
         for (Elevator elevator : copyElevators) {
 
-            int pickupTime = elevator.pickup(floor, offset);
-            if (pickupTime < result) {
-                result = pickupTime;
-                elevatorId = elevator.getElevatorId();
-            }
+//            int pickupTime = elevator.pickup(floor, offset);
+//            if (pickupTime < result) {
+//                result = pickupTime;
+//                elevatorId = elevator.getElevatorId();
+//            }
         }
         return new Pair<>(elevatorId, result);
     }
@@ -53,12 +53,12 @@ public class ElevatorSystem {
 
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
-                elevator.pickup(floorNumber, offset);
+//                elevator.pickup(floorNumber, offset);
             }
         }
 
 //        elevators.get(elevatorId).pickup(floorNumber, offset);
-        System.out.println("ElevatorExile for pickup: " + elevatorId);
+        System.out.println("Elevator for pickup: " + elevatorId);
     }
 
     void printElevators() {

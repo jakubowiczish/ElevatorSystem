@@ -7,7 +7,7 @@ public class App {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the desired amount of elevatorExiles for your elevator system:");
+        System.out.println("Enter the desired amount of elevators for your elevator system:");
 
         int numberOfElevators = scanner.nextInt();
 
@@ -17,7 +17,7 @@ public class App {
         System.out.println("Enter current level for every elevator:");
 
         for (int i = 0; i < numberOfElevators; ++i) {
-            System.out.println("ElevatorExile " + i + ":");
+            System.out.println("Elevator " + i + ":");
             int currentLevel = scanner.nextInt();
             elevatorSystem.addElevator(currentLevel);
         }

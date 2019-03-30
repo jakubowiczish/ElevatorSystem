@@ -2,28 +2,33 @@ package elevatorsystem;
 
 import elevatorsystem.model.Pair;
 
+import java.lang.annotation.ElementType;
 import java.util.LinkedList;
 
 public class Elevator {
     private int elevatorId;
     private int currentLevel;
-    private LinkedList<Level> levels;
-
+    private LinkedList<Integer> risingLevels;
+    private LinkedList<Integer> slopingLevels;
 
     public Elevator(int elevatorId, int currentLevel) {
         this.elevatorId = elevatorId;
         this.currentLevel = currentLevel;
-        levels = new LinkedList<>();
+        risingLevels = new LinkedList<>();
+        slopingLevels = new LinkedList<>();
     }
-
 
     public int getElevatorId() {
         return elevatorId;
     }
 
 
-    public LinkedList<Level> getLevels() {
-        return levels;
+    public LinkedList<Integer> getRisingLevels() {
+        return risingLevels;
+    }
+
+    public LinkedList<Integer> getSlopingLevels() {
+        return slopingLevels;
     }
 
 
@@ -32,186 +37,116 @@ public class Elevator {
     }
 
 
-    private int countDistance(Level level) {
-        return Math.abs(currentLevel - level.getLevelNumber());
-    }
-
-
-    boolean containsLevelNumber(int levelNumber) {
-        for (Level level : levels) {
-            if (level.getLevelNumber() == levelNumber)
-                return true;
-        }
-
-        return false;
-    }
-
-    private void addToLevels(Level levelToAdd) {
-        if (levels.size() == 0) {
-            levels.addFirst(levelToAdd);
-        } else {
-            if (!containsLevelNumber(levelToAdd.getLevelNumber())) {
-                Level firstLevelInTheList = levels.getFirst();
-                if (countDistance(levelToAdd) < countDistance(firstLevelInTheList)) {
-                    if (levelToAdd.getSourceLevel() == firstLevelInTheList.getLevelNumber()) {
-                        if (levels.size() >= 2) {
-                            levels.add(2, levelToAdd);
-                        } else {
-                            levels.addLast(levelToAdd);
-                        }
-                    } else if (levelToAdd.getLevelNumber() == firstLevelInTheList.getSourceLevel()) {
-                        levels.addFirst(levelToAdd);
-                    }
-                } else {
-                    if (firstLevelInTheList.getSourceLevel() == levelToAdd.getLevelNumber()) {
-                        levels.addFirst(levelToAdd);
-                    } else {
-                        if (levels.size() >= 2) {
-                            levels.add(2, levelToAdd);
-                        } else {
-                            levels.addLast(levelToAdd);
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-
-    boolean subListContains(LinkedList<Level> subList, Level level) {
-        for (Level level1 : subList) {
-            if (level1.getLevelNumber() == level.getLevelNumber()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
-    int pickup(int floor, int offset) {
-        Level srcLevel = new Level(floor, 0, false);
-        Level destLevel = new Level(floor + offset, offset, true);
-
+    int pickupCount(int floor) {
         if (getDirection() == Direction.NONE) {
-            addToLevels(srcLevel);
-            addToLevels(destLevel);
-            return getFloorDifference(floor);
-        } else if (getDirection() == Direction.UP) {
-            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
-
-            if (isBetweenBounds(increasingBounds, floor)) {
-                LinkedList<Level> increasingSubList = new LinkedList<>(
-                        levels.subList(increasingBounds.getFirst(), increasingBounds.getSecond())
-                );
-
-                if (!subListContains(increasingSubList, srcLevel)) {
-                    for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
-
-                    }
-                }
-            }
-
-
+            return Math.abs(floor - currentLevel);
         }
-
-        return -1;
+        return countSteps(floor);
     }
 
-
-    public void step() {
-        if (levels.size() == 0) return;
+    int countSteps(int floor) {
+        int indexOfFloor = risingLevels.indexOf(floor);
 
         if (getDirection() == Direction.DOWN) {
-            --currentLevel;
-            System.out.println("Elevator " + elevatorId + " moves down, now on " + currentLevel + " floor");
-        } else if (getDirection() == Direction.UP) {
-            ++currentLevel;
-            System.out.println("Elevator " + elevatorId + " moves up, now on " + currentLevel + " floor");
+            indexOfFloor = slopingLevels.indexOf(floor);
         }
 
-        if (currentLevel == levels.getFirst().getLevelNumber()) {
-            System.out.println("Destination reached for elevator: " + elevatorId);
-            levels.removeFirst();
+        LinkedList<Integer> levels = risingLevels;
+
+        if (getDirection() == Direction.DOWN) {
+            levels = slopingLevels;
         }
-    }
-
-
-    private Pair<Integer, Integer> getBounds(Direction direction) {
-
-        int startIndex = levels.size() - 1, endIndex = levels.size() - 1;
-        boolean isRising = false;
-        boolean isDecreasing = false;
-
-        int i;
-        for (i = 1; i < levels.size(); ++i) {
-            int previous = levels.get(i - 1).getLevelNumber();
-            int actual = levels.get(i).getLevelNumber();
-
-            if (direction == Direction.UP) {
-                if (actual > previous) {
-                    if (!isRising) {
-                        startIndex = i - 1;
-                    }
-                    isRising = true;
-                } else {
-                    endIndex = i - 1;
-                    break;
-                }
-            } else if (direction == Direction.DOWN) {
-                if (actual < previous) {
-                    if (!isDecreasing) {
-                        startIndex = i - 1;
-                    }
-                    isDecreasing = true;
-                } else {
-                    endIndex = i - 1;
-                    break;
-                }
-            }
-        }
-
-        return new Pair<>(startIndex, endIndex);
-    }
-
-
-    private Direction getDirection() {
-        if (levels.size() == 0) {
-            return Direction.NONE;
-        }
-
-        if (currentLevel - levels.getFirst().getLevelNumber() < 0) {
-            return Direction.UP;
-        }
-
-        return Direction.DOWN;
-    }
-
-
-    int countNumberOfSteps(int floor) {
-        int indexOfFloor = levels.indexOf(floor);
 
         int previous, actual;
         int result = 0;
-
         for (int i = 1; i < indexOfFloor; ++i) {
-            previous = levels.get(i - 1).getLevelNumber();
-            actual = levels.get(i).getLevelNumber();
+            previous = levels.get(i - 1);
+            actual = levels.get(i);
             result += Math.abs(actual - previous);
         }
 
         return result;
     }
 
+    void addWhenStaying(int floor, int offset) {
+        if (getDirection() == Direction.NONE) {
+            if (currentLevel < floor) {
+                risingLevels.addFirst(floor + offset);
+                risingLevels.addFirst(floor);
+            } else if (currentLevel > floor) {
+                slopingLevels.addFirst(floor + offset);
+                slopingLevels.addFirst(floor);
+            } else {
+                System.out.println("You are already on the " + floor + " floor!\nTry again");
+            }
+        }
+    }
 
-    private int getFloorDifference(int floor) {
-        return Math.abs(floor - currentLevel);
+    void addOtherwise(int floor, int offset) {
+        if (getDirection() == Direction.UP || getDirection() == Direction.DOWN) {
+            if (floor + offset > currentLevel) {
+                risingLevels.addFirst(floor + offset);
+            } else if (floor + offset < currentLevel) {
+                slopingLevels.addFirst(floor + offset);
+            }
+
+            if (floor > currentLevel) {
+                risingLevels.addFirst(floor);
+            } else if (floor < currentLevel) {
+                slopingLevels.addFirst(floor);
+            }
+        }
     }
 
 
-    private boolean isBetweenBounds(Pair<Integer, Integer> bounds, int floor) {
-        return floor > levels.get(bounds.getFirst()).getLevelNumber()
-                && floor < levels.get(bounds.getSecond()).getLevelNumber();
+    void update(int floor, int offset) {
+        addWhenStaying(floor, offset);
+        addOtherwise(floor, offset);
+    }
+
+
+    public void step() {
+        if (risingLevels.size() == 0 && slopingLevels.size() == 0) return;
+
+        if (getDirection() == Direction.DOWN) {
+            --currentLevel;
+            System.out.println("Elevator " + elevatorId + " moves down, now on " + currentLevel + " floor");
+
+        } else if (getDirection() == Direction.UP) {
+            ++currentLevel;
+            System.out.println("Elevator " + elevatorId + " moves up, now on " + currentLevel + " floor");
+        }
+
+        if (getDirection() == Direction.UP && currentLevel == risingLevels.getFirst()) {
+            System.out.println("Destination reached for elevator: " + elevatorId);
+            risingLevels.removeFirst();
+        } else if (getDirection() == Direction.DOWN && currentLevel == slopingLevels.getFirst()) {
+            System.out.println("Destination reached for elevator: " + elevatorId);
+            slopingLevels.removeFirst();
+        }
+    }
+
+
+    private Direction getDirection() {
+        if (risingLevels.isEmpty() && slopingLevels.isEmpty()) {
+            return Direction.NONE;
+        } else if (!risingLevels.isEmpty() && slopingLevels.isEmpty()) {
+            return Direction.UP;
+        } else if (risingLevels.isEmpty() && !slopingLevels.isEmpty()) {
+            return Direction.DOWN;
+        }
+
+        if (getDirection() == Direction.UP) {
+            if (!risingLevels.isEmpty()) {
+                return Direction.UP;
+            }
+        } else if (getDirection() == Direction.DOWN) {
+            if (!slopingLevels.isEmpty()) {
+                return Direction.DOWN;
+            }
+        }
+
+        return Direction.NONE;
     }
 
 
@@ -219,17 +154,27 @@ public class Elevator {
         int elevatorId;
         int currentLevel;
         int currentDestinationLevel;
-        LinkedList<Level> levels;
 
         ElevatorStatus() {
             this.elevatorId = Elevator.this.elevatorId;
             this.currentLevel = Elevator.this.currentLevel;
-            if (getLevels().size() > 0) {
-                this.currentDestinationLevel = Elevator.this.getLevels().getFirst().getLevelNumber();
-            } else {
-                this.currentDestinationLevel = -1;
+
+            if (getDirection() == Direction.UP) {
+                if (Elevator.this.risingLevels.size() > 0) {
+                    this.currentDestinationLevel = Elevator.this.risingLevels.getFirst();
+                }
+                else {
+                    this.currentDestinationLevel = -1;
+                }
             }
-            this.levels = Elevator.this.levels;
+            if (getDirection() == Direction.DOWN) {
+                if (Elevator.this.slopingLevels.size() > 0) {
+                    this.currentDestinationLevel = Elevator.this.slopingLevels.getFirst();
+                }
+                else {
+                    this.currentDestinationLevel = -1;
+                }
+            }
         }
 
 
@@ -239,7 +184,6 @@ public class Elevator {
                     "elevatorId=" + elevatorId +
                     ", currentLevel=" + currentLevel +
                     ", currentDestinationLevel=" + currentDestinationLevel +
-                    ", levels=" + levels +
                     '}';
         }
     }
