@@ -30,7 +30,7 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
-    Pair<Integer, Integer> getElevatorAndTime(int floor, int offset) {
+    Pair<Integer, Integer> getElevatorAndTime(int floor) {
         int result = Integer.MAX_VALUE;
         int elevatorId = -1;
 
@@ -38,22 +38,22 @@ public class ElevatorSystem {
 
         for (Elevator elevator : copyElevators) {
 
-//            int pickupTime = elevator.pickup(floor, offset);
-//            if (pickupTime < result) {
-//                result = pickupTime;
-//                elevatorId = elevator.getElevatorId();
-//            }
+            int pickupTime = elevator.pickupCount(floor);
+            if (pickupTime < result) {
+                result = pickupTime;
+                elevatorId = elevator.getElevatorId();
+            }
         }
         return new Pair<>(elevatorId, result);
     }
 
-    void pickup(int floorNumber, int offset) {
-        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floorNumber, offset);
+    void pickup(int floor, int offset) {
+        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floor);
         int elevatorId = bestElevator.getFirst();
 
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
-//                elevator.pickup(floorNumber, offset);
+                elevator.update(floor, offset);
             }
         }
 

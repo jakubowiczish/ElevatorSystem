@@ -10,6 +10,7 @@ public class Elevator {
     private int currentLevel;
     private LinkedList<Integer> risingLevels;
     private LinkedList<Integer> slopingLevels;
+    private int direction;
 
     public Elevator(int elevatorId, int currentLevel) {
         this.elevatorId = elevatorId;
@@ -38,7 +39,7 @@ public class Elevator {
 
 
     int pickupCount(int floor) {
-        if (getDirection() == Direction.NONE) {
+        if (direction == -1) {
             return Math.abs(floor - currentLevel);
         }
         return countSteps(floor);
@@ -47,13 +48,13 @@ public class Elevator {
     int countSteps(int floor) {
         int indexOfFloor = risingLevels.indexOf(floor);
 
-        if (getDirection() == Direction.DOWN) {
+        if (direction == -1) {
             indexOfFloor = slopingLevels.indexOf(floor);
         }
 
         LinkedList<Integer> levels = risingLevels;
 
-        if (getDirection() == Direction.DOWN) {
+        if (direction == -1) {
             levels = slopingLevels;
         }
 
@@ -69,7 +70,9 @@ public class Elevator {
     }
 
     void addWhenStaying(int floor, int offset) {
-        if (getDirection() == Direction.NONE) {
+        setDirection();
+
+        if (direction == 0) {
             if (currentLevel < floor) {
                 risingLevels.addFirst(floor + offset);
                 risingLevels.addFirst(floor);
@@ -83,12 +86,16 @@ public class Elevator {
     }
 
     void addOtherwise(int floor, int offset) {
-        if (getDirection() == Direction.UP || getDirection() == Direction.DOWN) {
+        setDirection();
+
+        if (direction == 1 || direction == -1) {
             if (floor + offset > currentLevel) {
                 risingLevels.addFirst(floor + offset);
             } else if (floor + offset < currentLevel) {
                 slopingLevels.addFirst(floor + offset);
             }
+
+            setDirection();
 
             if (floor > currentLevel) {
                 risingLevels.addFirst(floor);
@@ -108,45 +115,47 @@ public class Elevator {
     public void step() {
         if (risingLevels.size() == 0 && slopingLevels.size() == 0) return;
 
-        if (getDirection() == Direction.DOWN) {
+        if (direction == -1) {
             --currentLevel;
             System.out.println("Elevator " + elevatorId + " moves down, now on " + currentLevel + " floor");
 
-        } else if (getDirection() == Direction.UP) {
+        } else if (direction == 1) {
             ++currentLevel;
             System.out.println("Elevator " + elevatorId + " moves up, now on " + currentLevel + " floor");
         }
 
-        if (getDirection() == Direction.UP && currentLevel == risingLevels.getFirst()) {
+        if (direction == 1 && currentLevel == risingLevels.getFirst()) {
             System.out.println("Destination reached for elevator: " + elevatorId);
             risingLevels.removeFirst();
-        } else if (getDirection() == Direction.DOWN && currentLevel == slopingLevels.getFirst()) {
+        } else if (direction == -1 && currentLevel == slopingLevels.getFirst()) {
             System.out.println("Destination reached for elevator: " + elevatorId);
             slopingLevels.removeFirst();
         }
+        setDirection();
+
     }
 
 
-    private Direction getDirection() {
+    private void setDirection() {
         if (risingLevels.isEmpty() && slopingLevels.isEmpty()) {
-            return Direction.NONE;
+            direction = 0;
         } else if (!risingLevels.isEmpty() && slopingLevels.isEmpty()) {
-            return Direction.UP;
+            direction = 1;
         } else if (risingLevels.isEmpty() && !slopingLevels.isEmpty()) {
-            return Direction.DOWN;
+            direction = -1;
         }
 
-        if (getDirection() == Direction.UP) {
+        if (direction == 1) {
             if (!risingLevels.isEmpty()) {
-                return Direction.UP;
+                direction = 1;
             }
-        } else if (getDirection() == Direction.DOWN) {
+        } else if (direction == -1) {
             if (!slopingLevels.isEmpty()) {
-                return Direction.DOWN;
+                direction = -1;
             }
         }
 
-        return Direction.NONE;
+        direction = 0;
     }
 
 
@@ -159,19 +168,17 @@ public class Elevator {
             this.elevatorId = Elevator.this.elevatorId;
             this.currentLevel = Elevator.this.currentLevel;
 
-            if (getDirection() == Direction.UP) {
+            if (direction == 1) {
                 if (Elevator.this.risingLevels.size() > 0) {
                     this.currentDestinationLevel = Elevator.this.risingLevels.getFirst();
-                }
-                else {
+                } else {
                     this.currentDestinationLevel = -1;
                 }
             }
-            if (getDirection() == Direction.DOWN) {
+            if (direction == -1) {
                 if (Elevator.this.slopingLevels.size() > 0) {
                     this.currentDestinationLevel = Elevator.this.slopingLevels.getFirst();
-                }
-                else {
+                } else {
                     this.currentDestinationLevel = -1;
                 }
             }
@@ -186,11 +193,5 @@ public class Elevator {
                     ", currentDestinationLevel=" + currentDestinationLevel +
                     '}';
         }
-    }
-
-    enum Direction {
-        UP,
-        DOWN,
-        NONE
     }
 }
