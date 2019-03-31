@@ -4,6 +4,10 @@ import elevatorsystem.model.Pair;
 
 import java.util.LinkedList;
 
+/**
+ * Class that contains information about elevator
+ * in addition to necessary methods that make usage of the program possible
+ */
 class Elevator {
     private int elevatorId;
     private int currentLevel;

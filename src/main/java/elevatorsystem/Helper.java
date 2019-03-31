@@ -1,6 +1,12 @@
 package elevatorsystem;
 
+/**
+ * Class that contains methods that might help user during program usage
+ */
 public class Helper {
+    /**
+     * Method that prints the introduction to the program
+     */
     public static void printIntroductionToTheProgram() {
         String title = "ELEVATOR SYSTEM";
 
@@ -16,6 +22,9 @@ public class Helper {
     }
 
 
+    /**
+     * Method that prints the help when required
+     */
     public static void printHelp() {
         String pickupStatement = "\n\npickup - if you type \"pickup\" you will be asked to enter the floor for the pickup," +
                 "\nand after that, to enter the direction for the elevator when it reaches destined floor" +
