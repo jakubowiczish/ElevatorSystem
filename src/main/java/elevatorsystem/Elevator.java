@@ -5,30 +5,47 @@ import elevatorsystem.model.Pair;
 import java.util.LinkedList;
 
 class Elevator {
+    private int elevatorId;
+    private int currentLevel;
+    private LinkedList<Integer> levels;
+
+
     public Elevator(int elevatorId, int currentLevel) {
         this.elevatorId = elevatorId;
         this.currentLevel = currentLevel;
         levels = new LinkedList<>();
     }
 
-    private int elevatorId;
-    private int currentLevel;
-    private LinkedList<Integer> levels;
+
+    public Elevator(int elevatorId, int currentLevel, LinkedList<Integer> levels) {
+        this.elevatorId = elevatorId;
+        this.currentLevel = currentLevel;
+        this.levels = new LinkedList<>(levels);
+    }
+
+
+    public Elevator clone() {
+        return new Elevator(this.elevatorId, this.currentLevel, this.levels);
+    }
+
 
     public int getElevatorId() {
         return elevatorId;
     }
 
+
     public LinkedList<Integer> getLevels() {
         return levels;
     }
+
 
     public ElevatorStatus generateStatus() {
         return new ElevatorStatus();
     }
 
+
     int getDirection() {
-        if (levels.size() == 0) {
+        if (levels.isEmpty()) {
             return 0;
         }
         if (currentLevel - levels.getFirst() < 0) {
@@ -37,6 +54,7 @@ class Elevator {
 
         return -1;
     }
+
 
     public void step() {
         if (levels.size() == 0) return;
@@ -55,23 +73,6 @@ class Elevator {
         }
     }
 
-
-    public void pickup(int floorNumber, int destinationOffset) {
-        addDestination(floorNumber);
-        addDestination(floorNumber + destinationOffset);
-    }
-
-    public void addDestination(int destinationLevel) {
-        if (!levels.contains(destinationLevel)) {
-            levels.addLast(destinationLevel);
-        }
-    }
-
-    private void addDestinationAtIndex(int index, int destinationLevel) {
-        if (!levels.contains(destinationLevel)) {
-            levels.add(index, destinationLevel);
-        }
-    }
 
     int countNumberOfSteps(int floor) {
         int indexOfFloor = levels.indexOf(floor);
@@ -122,35 +123,36 @@ class Elevator {
                 }
             }
 
-            System.out.println("Difference: " + difference);
             return difference;
-        }
 
-        if (getDirection() == 1) {
+        } else if (getDirection() == 1) {
             Pair<Integer, Integer> increasingBounds = getBounds(1);
 
-            if (isBetweenBounds(increasingBounds, floor)) {
-                LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
-                        increasingBounds.getFirst(), increasingBounds.getSecond())
-                );
+            if (!addDestination) {
 
-                if (!increasingSubList.contains(floor)) {
-                    for (int i = increasingBounds.getFirst(); i < increasingBounds.getSecond(); ++i) {
-                        if (levels.get(i) > floor) {
-                            if (!levels.contains(floor)) {
-                                levels.add(i, floor);
+                if (isBetweenBounds(increasingBounds, floor, true)) {
+                    LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
+                            increasingBounds.getFirst(), increasingBounds.getSecond() + 1)
+                    );
+
+                    if (!increasingSubList.contains(floor)) {
+                        for (int i = increasingBounds.getFirst(); i <= increasingBounds.getSecond(); ++i) {
+                            if (levels.get(i) > floor) {
+                                if (!levels.contains(floor)) {
+                                    levels.add(i, floor);
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
-                }
 
-            } else {
-                if (!levels.contains(floor)) {
-                    if (currentLevel < floor) {
-                        levels.add(0, floor);
-                    } else {
-                        levels.add(increasingBounds.getSecond() + 1, floor);
+                } else {
+                    if (!levels.contains(floor)) {
+                        if (currentLevel < floor) {
+                            levels.add(0, floor);
+                        } else {
+                            levels.add(increasingBounds.getSecond() + 1, floor);
+                        }
                     }
                 }
             }
@@ -162,10 +164,10 @@ class Elevator {
                 if (indexOfFloor == levels.size() - 1) {
                     levels.addLast(destination);
                 } else {
-                    if (isBetweenBounds(increasingBounds, floor) && destination > floor) {
+                    if (isBetweenBounds(increasingBounds, floor, true) && destination > floor) {
 
                         LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
-                                increasingBounds.getFirst(), increasingBounds.getSecond())
+                                increasingBounds.getFirst(), increasingBounds.getSecond() + 1)
                         );
 
                         if (!increasingSubList.contains(destination)) {
@@ -181,7 +183,7 @@ class Elevator {
                             }
 
                         }
-                    } else if (isBetweenBounds(increasingBounds, floor) && destination < floor) {
+                    } else if (isBetweenBounds(increasingBounds, floor, true) && destination < floor) {
                         if (levels.size() > increasingBounds.getSecond()) {
                             levels.add(increasingBounds.getSecond() + 1, destination);
                         } else {
@@ -196,30 +198,37 @@ class Elevator {
         } else if (getDirection() == -1) {
             Pair<Integer, Integer> decreasingBounds = getBounds(-1);
 
+            if (!addDestination) {
+//                System.out.println(decreasingBounds);
 
-            if (isBetweenBounds(decreasingBounds, floor)) {
-                LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
-                        decreasingBounds.getFirst(), decreasingBounds.getSecond()
-                ));
-                if (!decreasingSubList.contains(floor)) {
-                    for (int i = decreasingBounds.getFirst(); i < decreasingBounds.getSecond(); ++i) {
-                        if (levels.get(i) < floor) {
-                            if (!levels.contains(floor)) {
+//                System.out.println(isBetweenBounds(decreasingBounds, floor, false));
+
+                if (isBetweenBounds(decreasingBounds, floor, false)) {
+                    LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
+                            decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1
+                    ));
+
+                    System.out.println(decreasingSubList);
+
+                    if (!decreasingSubList.contains(floor)) {
+                        for (int i = decreasingBounds.getFirst(); i <= decreasingBounds.getSecond(); ++i) {
+                            if (levels.get(i) < floor) {
                                 levels.add(i, floor);
+                                break;
                             }
-                            break;
+                        }
+                    }
+                } else {
+                    if (!levels.contains(floor)) {
+                        if (currentLevel < floor) {
+                            levels.add(0, floor);
+                        } else {
+                            levels.add(decreasingBounds.getSecond() + 1, floor);
                         }
                     }
                 }
-            } else {
-                if (!levels.contains(floor)) {
-                    if (currentLevel > floor) {
-                        levels.add(0, floor);
-                    } else {
-                        levels.add(decreasingBounds.getSecond() + 1, floor);
-                    }
-                }
             }
+
 
             if (addDestination) {
                 int destination = floor + offset;
@@ -228,26 +237,32 @@ class Elevator {
                 if (indexOfFloor == levels.size() - 1) {
                     levels.addLast(destination);
                 } else {
-                    if (isBetweenBounds(decreasingBounds, floor) && destination < floor) {
+                    if (isBetweenBounds(decreasingBounds, floor, false) && destination < floor) {
 
                         LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
-                                decreasingBounds.getFirst(), decreasingBounds.getSecond())
+                                decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1)
                         );
+
+//                        System.out.println(decreasingSubList);
 
                         if (!decreasingSubList.contains(destination)) {
                             if (indexOfFloor == levels.size() - 1) {
                                 levels.addLast(destination);
                             } else {
+                                boolean added = false;
                                 for (int i = indexOfFloor + 1; i < levels.size(); ++i) {
                                     if (levels.get(i) < destination) {
                                         levels.add(i, destination);
+                                        added = true;
                                         break;
                                     }
                                 }
+                                if (!added) {
+                                    levels.addLast(destination);
+                                }
                             }
-
                         }
-                    } else if (isBetweenBounds(decreasingBounds, floor) && destination > floor) {
+                    } else if (isBetweenBounds(decreasingBounds, floor, false) && destination > floor) {
                         if (levels.size() > decreasingBounds.getSecond()) {
                             levels.add(decreasingBounds.getSecond() + 1, destination);
                         } else {
@@ -259,20 +274,23 @@ class Elevator {
                 }
             }
         }
-
-        int numberOfSteps = countNumberOfSteps(floor);
-        System.out.println("Number of steps: " + numberOfSteps);
-        return numberOfSteps;
+        return countNumberOfSteps(floor);
     }
+
 
     private int getFloorDifference(int floor, int currentLevel) {
         return Math.abs(floor - currentLevel);
     }
 
-    private boolean isBetweenBounds(Pair<Integer, Integer> bounds, int floor) {
-        return floor > levels.get(bounds.getFirst())
-                && floor < levels.get(bounds.getSecond());
+
+    private boolean isBetweenBounds(Pair<Integer, Integer> bounds, int floor, boolean isIncreasing) {
+        if (isIncreasing) {
+            return floor > levels.get(bounds.getFirst()) && floor < levels.get(bounds.getSecond());
+        }
+
+        return floor < levels.get(bounds.getFirst()) && floor > levels.get(bounds.getSecond());
     }
+
 
     private Pair<Integer, Integer> getBounds(int direction) {
         int startIndex = levels.size() - 1, endIndex = levels.size() - 1;
@@ -309,6 +327,7 @@ class Elevator {
 
         return new Pair<>(startIndex, endIndex);
     }
+
 
     class ElevatorStatus {
         int elevatorId;

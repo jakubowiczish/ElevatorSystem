@@ -2,23 +2,17 @@ package elevatorsystem;
 
 import elevatorsystem.model.Pair;
 
+import javax.swing.text.AbstractDocument;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ElevatorSystem {
-    private List<Elevator> elevators;
+    private LinkedList<Elevator> elevators;
 
-    public ElevatorSystem(List<Elevator> elevators) {
+    public ElevatorSystem(LinkedList<Elevator> elevators) {
         this.elevators = elevators;
-    }
-
-    void update(int elevatorId, int destinationLevel) {
-        for (Elevator elevator : elevators) {
-            if (elevator.getElevatorId() == elevatorId) {
-                elevator.getLevels().add(destinationLevel);
-            }
-        }
     }
 
     List<Elevator.ElevatorStatus> status() {
@@ -30,15 +24,21 @@ public class ElevatorSystem {
         return elevators.size() - 1;
     }
 
-    Pair<Integer, Integer> getElevatorAndTime(int floor) {
+    Pair<Integer, Integer> getElevatorAndSteps(int floor) {
         int result = Integer.MAX_VALUE;
         int elevatorId = -1;
 
-        LinkedList<Elevator> elevatorsCopy = new LinkedList<>(elevators);
+        LinkedList<Elevator> elevatorsCopy = new LinkedList<>();
+
+        for (int i = 0; i < elevators.size(); ++i) {
+            elevatorsCopy.add(i, elevators.get(i).clone());
+        }
 
         for (Elevator elevator : elevatorsCopy) {
-
             int pickupTime = elevator.pickup(floor, 0, false);
+
+//            System.out.println("PICKUP TIME: " + pickupTime + " FOR ELEVATOR: " + elevator.getElevatorId());
+
             if (pickupTime < result) {
                 result = pickupTime;
                 elevatorId = elevator.getElevatorId();
@@ -49,13 +49,13 @@ public class ElevatorSystem {
     }
 
     void pickup(int floor, int offset) {
-        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floor);
+        Pair<Integer, Integer> bestElevator = getElevatorAndSteps(floor);
         int elevatorId = bestElevator.getFirst();
 
         elevators.get(elevatorId).pickup(floor, 0, false);
         elevators.get(elevatorId).pickup(floor, offset, true);
 
-        System.out.println("Elevator for pickup: " + elevatorId);
+//        System.out.println("Elevator for pickup: " + elevatorId + ",\nsteps: " + bestElevator.getSecond());
     }
 
     void printElevators() {
