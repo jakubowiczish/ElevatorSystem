@@ -89,7 +89,7 @@ class Elevator {
     }
 
 
-    int pickup(int floor, int offset, boolean addDestination) {
+    int pickup(int floor, int offset, boolean isDestinationToAdd) {
         if (getDirection() == 0) {
             int difference = getFloorDifference(floor, currentLevel);
             if (levels.isEmpty()) {
@@ -107,7 +107,7 @@ class Elevator {
                 }
             }
 
-            if (addDestination) {
+            if (isDestinationToAdd) {
                 int destination = floor + offset;
 
                 int indexOfFloor = levels.indexOf(floor);
@@ -128,7 +128,7 @@ class Elevator {
         } else if (getDirection() == 1) {
             Pair<Integer, Integer> increasingBounds = getBounds(1);
 
-            if (!addDestination) {
+            if (!isDestinationToAdd) {
 
                 if (isBetweenBounds(increasingBounds, floor, true)) {
                     LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
@@ -157,7 +157,7 @@ class Elevator {
                 }
             }
 
-            if (addDestination) {
+            if (isDestinationToAdd) {
                 int destination = floor + offset;
                 int indexOfFloor = levels.indexOf(floor);
 
@@ -174,11 +174,16 @@ class Elevator {
                             if (indexOfFloor == levels.size() - 1) {
                                 levels.addLast(destination);
                             } else {
+                                boolean added = false;
                                 for (int i = indexOfFloor + 1; i < levels.size(); ++i) {
                                     if (levels.get(i) > destination) {
                                         levels.add(i, destination);
+                                        added = true;
                                         break;
                                     }
+                                }
+                                if (!added) {
+                                    levels.addLast(destination);
                                 }
                             }
 
@@ -198,11 +203,7 @@ class Elevator {
         } else if (getDirection() == -1) {
             Pair<Integer, Integer> decreasingBounds = getBounds(-1);
 
-            if (!addDestination) {
-//                System.out.println(decreasingBounds);
-
-//                System.out.println(isBetweenBounds(decreasingBounds, floor, false));
-
+            if (!isDestinationToAdd) {
                 if (isBetweenBounds(decreasingBounds, floor, false)) {
                     LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
                             decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1
@@ -211,11 +212,16 @@ class Elevator {
                     System.out.println(decreasingSubList);
 
                     if (!decreasingSubList.contains(floor)) {
+                        boolean added = false;
                         for (int i = decreasingBounds.getFirst(); i <= decreasingBounds.getSecond(); ++i) {
                             if (levels.get(i) < floor) {
                                 levels.add(i, floor);
+                                added = true;
                                 break;
                             }
+                        }
+                        if (!added) {
+                            levels.addLast(floor);
                         }
                     }
                 } else {
@@ -230,7 +236,7 @@ class Elevator {
             }
 
 
-            if (addDestination) {
+            if (isDestinationToAdd) {
                 int destination = floor + offset;
                 int indexOfFloor = levels.indexOf(floor);
 
@@ -242,8 +248,6 @@ class Elevator {
                         LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
                                 decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1)
                         );
-
-//                        System.out.println(decreasingSubList);
 
                         if (!decreasingSubList.contains(destination)) {
                             if (indexOfFloor == levels.size() - 1) {
