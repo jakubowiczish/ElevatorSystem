@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="ElevatorSystem.main" target="11" />
-      <module name="ElevatorSystem.test" target="11" />
+      <module name="ElevatorSystem_main" target="11" />
+      <module name="ElevatorSystem_test" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>
