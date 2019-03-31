@@ -6,8 +6,10 @@ import java.util.Scanner;
 public class App {
 
     public static void main(String[] args) {
+        Helper.printIntroductionToTheProgram();
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the desired amount of elevators for your elevator system:");
+        System.out.println("\nEnter the desired amount of elevators for your elevator system:");
 
         int numberOfElevators = scanner.nextInt();
 
@@ -23,14 +25,14 @@ public class App {
         }
 
         while (true) {
-            System.out.println("Choose the activity of elevator system:");
+            System.out.println("Choose the activity for the elevator system:");
             String activityName = scanner.next().toLowerCase().trim();
             if (activityName.equals("status")) {
                 elevatorSystem.printStatus();
             }
 
             if (activityName.equals("pickup")) {
-                System.out.println("Enter the floor for pickup:");
+                System.out.println("Enter the floor for a pickup:");
                 int pickupFloor = scanner.nextInt();
                 System.out.println("Enter the direction e.g -2 for 2 floors down, 3 for 3 floors up");
                 int direction = scanner.nextInt();
@@ -44,6 +46,10 @@ public class App {
                 for (int i = 0; i < numberOfSteps; i++) {
                     elevatorSystem.step();
                 }
+            }
+
+            if (activityName.equals("help")) {
+                Helper.printHelp();
             }
 
             if (activityName.equals("exit")) {
