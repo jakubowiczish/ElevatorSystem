@@ -10,8 +10,10 @@ public class App {
         System.out.println("Enter the desired amount of elevators for your elevator system:");
 
         int numberOfElevators = scanner.nextInt();
+
         LinkedList<Elevator> elevators = new LinkedList<>();
         ElevatorSystem elevatorSystem = new ElevatorSystem(elevators);
+
         System.out.println("Enter current level for every elevator:");
 
         for (int i = 0; i < numberOfElevators; ++i) {

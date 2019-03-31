@@ -2,6 +2,7 @@ package elevatorsystem;
 
 import elevatorsystem.model.Pair;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,7 @@ public class ElevatorSystem {
     void update(int elevatorId, int destinationLevel) {
         for (Elevator elevator : elevators) {
             if (elevator.getElevatorId() == elevatorId) {
-                elevator.getDestinationLevels().add(destinationLevel);
+                elevator.getLevels().add(destinationLevel);
             }
         }
     }
@@ -33,28 +34,27 @@ public class ElevatorSystem {
         int result = Integer.MAX_VALUE;
         int elevatorId = -1;
 
-        for (Elevator elevator : elevators) {
+        LinkedList<Elevator> elevatorsCopy = new LinkedList<>(elevators);
 
-            int pickupTime = elevator.doThePickup(floor, false);
+        for (Elevator elevator : elevatorsCopy) {
+
+            int pickupTime = elevator.pickup(floor, 0, false);
             if (pickupTime < result) {
                 result = pickupTime;
                 elevatorId = elevator.getElevatorId();
             }
         }
+
         return new Pair<>(elevatorId, result);
     }
 
-    void pickup(int floorNumber, int offset) {
-        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floorNumber);
+    void pickup(int floor, int offset) {
+        Pair<Integer, Integer> bestElevator = getElevatorAndTime(floor);
         int elevatorId = bestElevator.getFirst();
 
-        for (Elevator elevator : elevators) {
-            if (elevator.getElevatorId() == elevatorId) {
-                elevator.doThePickup(floorNumber, true);
-            }
-        }
+        elevators.get(elevatorId).pickup(floor, 0, false);
+        elevators.get(elevatorId).pickup(floor, offset, true);
 
-        elevators.get(elevatorId).pickup(floorNumber, offset);
         System.out.println("Elevator for pickup: " + elevatorId);
     }
 
