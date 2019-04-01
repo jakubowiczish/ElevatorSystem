@@ -78,6 +78,22 @@ class Elevator {
     }
 
 
+    /**
+     * Main method of the algorithm,
+     * returns the number of steps that the elevator needs to do to be able to do the pickup,
+     * as well as adds floor and destination floor respectively to the list of levels to make the algorithm efficient
+     * <p>
+     * The method should be called for every element in the copy of list of elevators
+     * because initially the clue is to determine the optimum number of steps amongst every elevator and then choose best elevator
+     *
+     * @param floor              floor number for the pickup operation
+     * @param offset             the direction of the elevator and the distance to overcome in one
+     *                           e.g. when offset is equal to -3 it means that elevator is to move 3 floors downwards
+     * @param isDestinationToAdd boolean value that decides whether the destination floor is to be added to the list
+     * @return number of steps that this elevator should do to be able to carry out the pickup operation for given floor
+     * @see ElevatorSystem
+     * @see Elevator
+     */
     int pickup(int floor, int offset, boolean isDestinationToAdd) {
         if (getDirection() == Direction.NONE) {
             int difference = getFloorDifference(floor, currentLevel);
@@ -115,8 +131,6 @@ class Elevator {
                 }
             }
 
-            System.out.println(levels + "LVL WHEN NONE");
-            System.out.println("diff" + difference);
             return difference;
 
         } else if (getDirection() == Direction.UP) {
@@ -138,7 +152,6 @@ class Elevator {
                         for (int i = increasingBounds.getFirst(); i <= increasingBounds.getSecond(); ++i) {
                             if (levels.get(i) > floor) {
                                 levels.add(i, floor);
-                                System.out.println("added to" + elevatorId);
                                 added = true;
                                 break;
                             }
@@ -206,9 +219,6 @@ class Elevator {
                 }
             }
 
-            System.out.println(levels + "LVL WHEN UP");
-
-            System.out.println("up return" + difference);
             return difference;
 
         } else {
@@ -248,7 +258,6 @@ class Elevator {
 
                 }
 
-                System.out.println("counting difference for " + elevatorId + " ");
                 difference = countNumberOfSteps(floor);
             }
 
@@ -297,17 +306,19 @@ class Elevator {
                 }
             }
 
-            System.out.println(levels + "LVL WHEN DOWN");
-            System.out.println("down return" + difference);
             return difference;
         }
     }
 
 
+    /**
+     * Counts amount of steps that the elevator needs to take to be able to do the pickup operation
+     *
+     * @param floor floor number for which number of steps is to be determined
+     * @return number of steps that the elevator needs to take to be able to do the pickup
+     * @see ElevatorSystem
+     */
     private int countNumberOfSteps(int floor) {
-        System.out.println("FLOOR IN COUNT FOR " + elevatorId);
-        System.out.println("LEVELS " + levels);
-
         if (!levels.contains(floor)) {
             return 1000;
         }
@@ -321,7 +332,6 @@ class Elevator {
             previous = levels.get(i - 1);
             actual = levels.get(i);
             result += Math.abs(actual - previous);
-            System.out.println("COUNTING RESULT FOR " + elevatorId);
         }
 
         return result;
@@ -333,6 +343,15 @@ class Elevator {
     }
 
 
+    /**
+     * Method that checks whether the floor is between given bounds, for increasing or decreasing sub list
+     * - third parameter specifies whether it is increasing list
+     *
+     * @param bounds       bounds for which the floor will be checked
+     * @param floor        floor that needs to be checked
+     * @param isIncreasing information about whether the list is increasing or decreasing
+     * @return true if floor is between given bounds, false otherwise
+     */
     private boolean isBetweenBounds(Pair<Integer, Integer> bounds, int floor, boolean isIncreasing) {
         if (isIncreasing) {
             return floor > levels.get(bounds.getFirst()) && floor < levels.get(bounds.getSecond());
@@ -342,6 +361,15 @@ class Elevator {
     }
 
 
+    /**
+     * Returns Pair<Integer, Integer> that contains indices that specify
+     * bounds for either first increasing or first decreasing list in the list of levels
+     *
+     * @param direction a current direction of the elevator
+     * @return Pair<Integer, Integer>
+     * - first field in pair is the first index of the bounds, second field is the last index of the bounds
+     * @see Elevator
+     */
     private Pair<Integer, Integer> getBounds(Direction direction) {
         int startIndex = 0, endIndex = levels.size() - 1;
         boolean isRising = false;
@@ -383,8 +411,10 @@ class Elevator {
      * Returns current direction of the elevator
      *
      * @return current direction of the elevator
+     * @see Direction
+     * @see Elevator
      */
-    Direction getDirection() {
+    private Direction getDirection() {
         if (levels.isEmpty()) {
             return Direction.NONE;
         }
@@ -398,6 +428,8 @@ class Elevator {
 
     /**
      * Enum that contains fields that specify the direction of the elevator
+     *
+     * @see Elevator
      */
     enum Direction {
         UP,
@@ -407,18 +439,20 @@ class Elevator {
 
 
     /**
-     * Returns the status of the elevator -
+     * Returns current status of the elevator
      *
      * @return current status of the elevator
      * @see ElevatorStatus
      */
-    public ElevatorStatus generateStatus() {
+    ElevatorStatus generateStatus() {
         return new ElevatorStatus();
     }
 
 
     /**
      * An inner class that is needed to generate status of the elevator
+     *
+     * @see Elevator
      */
     class ElevatorStatus {
         int elevatorId;
@@ -440,11 +474,11 @@ class Elevator {
 
         @Override
         public String toString() {
-            return "STATUS:\n" +
-                    "elevatorId=" + elevatorId +
-                    ", currentLevel=" + currentLevel +
-                    ", currentDestinationLevel=" + currentDestinationLevel +
-                    ", levels=" + levels +
+            return "\nSTATUS OF ELEVATOR:\n" +
+                    " elevatorId: " + elevatorId +
+                    ", current level: " + currentLevel +
+                    ", current destination level: " + currentDestinationLevel +
+                    ", levels to visit: " + levels +
                     "\n";
         }
     }
@@ -452,10 +486,10 @@ class Elevator {
 
     @Override
     public String toString() {
-        return "ELEVATOR:\n" +
-                "elevatorId=" + elevatorId +
-                ", currentLevel=" + currentLevel +
-                ", levels=" + levels +
+        return "\nELEVATOR:\n" +
+                "elevatorId: " + elevatorId +
+                ", currentLevel: " + currentLevel +
+                ", levels: " + levels +
                 "\n";
     }
 }

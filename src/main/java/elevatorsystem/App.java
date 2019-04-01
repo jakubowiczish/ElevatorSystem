@@ -5,6 +5,9 @@ import elevatorsystem.utils.Helper;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+/**
+ * Class with the main method
+ */
 public class App {
     public static void main(String[] args) {
         Helper.printIntroductionToTheProgram();

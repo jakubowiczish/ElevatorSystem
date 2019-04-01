@@ -15,7 +15,7 @@ public class ElevatorSystem {
     private LinkedList<Elevator> elevators;
 
 
-    public ElevatorSystem(LinkedList<Elevator> elevators) {
+    ElevatorSystem(LinkedList<Elevator> elevators) {
         this.elevators = elevators;
     }
 
@@ -25,12 +25,10 @@ public class ElevatorSystem {
      *
      * @param currentLevel the current level of elevator
      *                     that is to be added to list of elevators
-     * @return size of list of elevators
      * @see Elevator
      */
-    int addElevator(int currentLevel) {
+    void addElevator(int currentLevel) {
         elevators.add(new Elevator(elevators.size(), currentLevel));
-        return elevators.size() - 1;
     }
 
 
@@ -45,7 +43,7 @@ public class ElevatorSystem {
      * to be able to do the pickup for the given floor as well as the number of these steps
      * @see Elevator
      */
-    Pair<Integer, Integer> getElevatorAndSteps(int floor) {
+    private Pair<Integer, Integer> getElevatorAndSteps(int floor) {
         int numberOfSteps = Integer.MAX_VALUE;
         int elevatorId = -1;
 
@@ -57,9 +55,6 @@ public class ElevatorSystem {
 
         for (Elevator elevator : elevatorsCopy) {
             int pickupTime = elevator.pickup(floor, 0, false);
-
-            System.out.println("EXAMPLE");
-            System.out.println("pickup time: " + pickupTime + " elevator id: " + elevator.getElevatorId());
 
             if (pickupTime < numberOfSteps) {
                 numberOfSteps = pickupTime;
@@ -83,9 +78,8 @@ public class ElevatorSystem {
         Pair<Integer, Integer> bestElevatorStatus = getElevatorAndSteps(floor);
         int elevatorId = bestElevatorStatus.getFirst();
 
-        System.out.println("best elevator id: " + bestElevatorStatus.getFirst() + " steps " + bestElevatorStatus.getSecond());
+        System.out.println("Id of elevator that is responsible for this pickup: " + elevatorId);
 
-        System.out.println("REAL");
         elevators.get(elevatorId).pickup(floor, 0, false);
         elevators.get(elevatorId).pickup(floor, offset, true);
     }
@@ -98,7 +92,7 @@ public class ElevatorSystem {
      * @see Elevator
      * @see Elevator.ElevatorStatus
      */
-    List<Elevator.ElevatorStatus> status() {
+    private List<Elevator.ElevatorStatus> status() {
         return elevators.stream().map(e -> e.generateStatus()).collect(Collectors.toList());
     }
 
@@ -107,7 +101,7 @@ public class ElevatorSystem {
      * Prints the status of elevator system
      */
     void printStatus() {
-        System.out.println(status());
+        status().forEach(e -> System.out.println(e));
     }
 
 
