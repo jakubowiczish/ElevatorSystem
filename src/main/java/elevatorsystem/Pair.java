@@ -1,4 +1,4 @@
-package elevatorsystem.model;
+package elevatorsystem;
 
 /**
  * Pair class for storing some information

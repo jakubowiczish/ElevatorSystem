@@ -1,4 +1,4 @@
-package elevatorsystem;
+package elevatorsystem.utils;
 
 /**
  * Class that contains methods that might help user during program usage

@@ -1,12 +1,12 @@
 package elevatorsystem;
 
-import elevatorsystem.model.Pair;
-
 import java.util.LinkedList;
 
 /**
  * Class that contains information about elevator
  * in addition to necessary methods that make usage of the program possible
+ * @see ElevatorSystem
+ * @see ElevatorStatus
  */
 class Elevator {
     private int elevatorId;
@@ -28,11 +28,21 @@ class Elevator {
     }
 
 
+    /**
+     * Returns the clone of the elevator, required to make the copy of all elevators
+     *
+     * @return a clone of the elevator
+     * @see ElevatorSystem
+     */
     public Elevator clone() {
         return new Elevator(this.elevatorId, this.currentLevel, this.levels);
     }
 
-
+    /**
+     * Returns elevator id
+     *
+     * @return elevator id
+     */
     public int getElevatorId() {
         return elevatorId;
     }
@@ -43,30 +53,41 @@ class Elevator {
     }
 
 
+    /**
+     * Returns elevator status for
+     *
+     * @return
+     * @see ElevatorStatus
+     */
     public ElevatorStatus generateStatus() {
         return new ElevatorStatus();
     }
 
 
-    int getDirection() {
+    /**
+     * Returns current direction of the elevator
+     *
+     * @return current direction of the elevator
+     */
+    Direction getDirection() {
         if (levels.isEmpty()) {
-            return 0;
+            return Direction.NONE;
         }
         if (currentLevel - levels.getFirst() < 0) {
-            return 1;
+            return Direction.UP;
         }
 
-        return -1;
+        return Direction.DOWN;
     }
 
 
     public void step() {
         if (levels.size() == 0) return;
 
-        if (getDirection() == -1) {
+        if (getDirection() == Direction.DOWN) {
             --currentLevel;
             System.out.println("Elevator " + elevatorId + " moves down, now on " + currentLevel + " floor");
-        } else if (getDirection() == 1) {
+        } else if (getDirection() == Direction.UP) {
             ++currentLevel;
             System.out.println("Elevator " + elevatorId + " moves up, now on " + currentLevel + " floor");
         }
@@ -94,7 +115,7 @@ class Elevator {
 
 
     int pickup(int floor, int offset, boolean isDestinationToAdd) {
-        if (getDirection() == 0) {
+        if (getDirection() == Direction.NONE) {
             int difference = getFloorDifference(floor, currentLevel);
             if (levels.isEmpty()) {
                 levels.add(floor);
@@ -129,7 +150,7 @@ class Elevator {
 
             return difference;
 
-        } else if (getDirection() == 1) {
+        } else if (getDirection() == Direction.UP) {
             Pair<Integer, Integer> increasingBounds = getBounds(1);
 
             if (!isDestinationToAdd) {
@@ -204,7 +225,7 @@ class Elevator {
                 }
             }
 
-        } else if (getDirection() == -1) {
+        } else if (getDirection() == Direction.DOWN) {
             Pair<Integer, Integer> decreasingBounds = getBounds(-1);
 
             if (!isDestinationToAdd) {
@@ -337,6 +358,19 @@ class Elevator {
     }
 
 
+    /**
+     * Enum that contains fields that specify the direction of the elevator
+     */
+    enum Direction {
+        UP,
+        DOWN,
+        NONE
+    }
+
+
+    /**
+     * An inner class that is needed to generate status of the elevator
+     */
     class ElevatorStatus {
         int elevatorId;
         int currentLevel;
