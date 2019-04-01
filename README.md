@@ -50,7 +50,7 @@ The destination floor (destination = floor + offset) is to be added to the list 
 All important methods are described by means of java docs 
 
 ## Usage 
-To run the project you may use / generate a jar file and run it with command:
+To run the project you may use / generate a shadow jar file (Gradle -> Tasks -> shadow -> shadowJar) and run it with command:
 java -jar ElevatorSystem-all.jar
 or just run it by means of IntelliJ. 
 
