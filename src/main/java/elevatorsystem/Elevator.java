@@ -234,8 +234,6 @@ class Elevator {
                             decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1
                     ));
 
-                    System.out.println(decreasingSubList);
-
                     if (!decreasingSubList.contains(floor)) {
                         boolean added = false;
                         for (int i = decreasingBounds.getFirst(); i <= decreasingBounds.getSecond(); ++i) {
@@ -324,7 +322,6 @@ class Elevator {
         }
 
         int indexOfFloor = levels.indexOf(floor);
-        System.out.println(indexOfFloor);
 
         int previous, actual;
         int result = 0;

@@ -25,6 +25,12 @@ public class App {
         for (int i = 0; i < numberOfElevators; ++i) {
             System.out.println("Elevator " + i + ":");
             int currentLevel = scanner.nextInt();
+
+            if (currentLevel < 0) {
+                System.out.println("Elevators should be above ground!");
+                System.out.println("Elevator " + i + ":");
+                currentLevel = scanner.nextInt();
+            }
             elevatorSystem.addElevator(currentLevel);
         }
 
@@ -38,6 +44,12 @@ public class App {
             if (activityName.equals("pickup")) {
                 System.out.println("Enter the floor for a pickup:");
                 int pickupFloor = scanner.nextInt();
+
+                if (pickupFloor < 0) {
+                    System.out.println("The floor should be positive integer!");
+                    pickupFloor = scanner.nextInt();
+                }
+
                 System.out.println("Enter the direction e.g -2 for 2 floors down, 3 for 3 floors up");
                 int direction = scanner.nextInt();
 

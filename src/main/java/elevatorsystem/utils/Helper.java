@@ -40,15 +40,18 @@ public class Helper {
                 "\nthe system will take 2 steps and you will be informed about what is currently happening in the system" +
                 "\nYou will receive some information about movement of every elevator if such movement occurs etc.";
 
-        String helpStatement = "\n\ntype \"help\" to get the information about the usage of the system" +
+        String statusStatement = "\n\nstatus - type \"status\" to get the status of every elevator currently available in the system" +
+                "\n- id of the elevator, its current level and closest destination level";
+
+        String helpStatement = "\n\nhelp - type \"help\" to get the information about the usage of the system" +
                 "\n- as you did just a moment ago :D";
 
-        String statusStatement = "\n\ntype \"status\" to get the status of every elevator currently available in the system" +
-                "\n- id of the elevator, its current level and closest destination level";
+        String exitStatement = "\n\nexit - when you want to exit the system, just type \"exit\"";
 
         String helpInfo = "\nWhen you are being asked for the activity," +
                 "\nyou can choose from several ones such as:" +
-                pickupStatement + stepStatement + statusStatement + helpStatement + "\n\n";
+                pickupStatement + stepStatement + statusStatement + helpStatement + exitStatement + "\n\n";
+
 
         System.out.println(helpInfo);
     }
