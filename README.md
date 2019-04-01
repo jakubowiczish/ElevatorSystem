@@ -50,6 +50,12 @@ The destination floor (destination = floor + offset) is to be added to the list 
 All important methods are described by means of java docs 
 
 ## Usage 
+To run the project you may use / generate a jar file and run it with command:
+java -jar ElevatorSystem-all.jar
+or just run it by means of IntelliJ. 
+
+Then you need to just follow the instructions.
+
 You can see exemplary usage of the program below:
 
 [![asciicast](https://asciinema.org/a/2aV0VJIeYUfNyT7wCCbQaJXmV.svg)](https://asciinema.org/a/2aV0VJIeYUfNyT7wCCbQaJXmV)
