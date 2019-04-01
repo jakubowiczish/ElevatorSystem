@@ -115,15 +115,18 @@ class Elevator {
                 }
             }
 
+            System.out.println(levels + "LVL WHEN NONE");
             System.out.println("diff" + difference);
             return difference;
 
         } else if (getDirection() == Direction.UP) {
+
             int difference = 100;
 
-            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
+            Pair<Integer, Integer> increasingBounds;
 
             if (!isDestinationToAdd) {
+                increasingBounds = getBounds(Direction.UP);
 
                 if (isBetweenBounds(increasingBounds, floor, true)) {
                     LinkedList<Integer> increasingSubList = new LinkedList<>(levels.subList(
@@ -131,29 +134,36 @@ class Elevator {
                     );
 
                     if (!increasingSubList.contains(floor)) {
+                        boolean added = false;
                         for (int i = increasingBounds.getFirst(); i <= increasingBounds.getSecond(); ++i) {
                             if (levels.get(i) > floor) {
-                                if (!levels.contains(floor)) {
-                                    levels.add(i, floor);
-                                }
+                                levels.add(i, floor);
+                                System.out.println("added to" + elevatorId);
+                                added = true;
                                 break;
                             }
                         }
+                        if (!added) {
+                            levels.addLast(floor);
+                        }
+                    } else {
+                        levels.addLast(floor);
                     }
 
                 } else {
-                    if (!levels.contains(floor)) {
-                        if (currentLevel < floor) {
-                            levels.add(0, floor);
-                        } else {
-                            levels.add(increasingBounds.getSecond() + 1, floor);
-                        }
+                    if (currentLevel < floor) {
+                        levels.add(0, floor);
+                    } else {
+                        levels.add(increasingBounds.getSecond() + 1, floor);
                     }
                 }
+
                 difference = countNumberOfSteps(floor);
             }
 
             if (isDestinationToAdd) {
+                increasingBounds = getBounds(Direction.UP);
+
                 int destination = floor + offset;
                 int indexOfFloor = levels.indexOf(floor);
 
@@ -196,14 +206,19 @@ class Elevator {
                 }
             }
 
+            System.out.println(levels + "LVL WHEN UP");
+
+            System.out.println("up return" + difference);
             return difference;
 
         } else {
             int difference = 100;
 
-            Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
+            Pair<Integer, Integer> decreasingBounds;
 
             if (!isDestinationToAdd) {
+                decreasingBounds = getBounds(Direction.DOWN);
+
                 if (isBetweenBounds(decreasingBounds, floor, false)) {
                     LinkedList<Integer> decreasingSubList = new LinkedList<>(levels.subList(
                             decreasingBounds.getFirst(), decreasingBounds.getSecond() + 1
@@ -225,19 +240,22 @@ class Elevator {
                         }
                     }
                 } else {
-                    if (!levels.contains(floor)) {
-                        if (currentLevel < floor) {
-                            levels.add(0, floor);
-                        } else {
-                            levels.add(decreasingBounds.getSecond() + 1, floor);
-                        }
+                    if (currentLevel > floor) {
+                        levels.add(0, floor);
+                    } else {
+                        levels.add(decreasingBounds.getSecond() + 1, floor);
                     }
+
                 }
+
+                System.out.println("counting difference for " + elevatorId + " ");
                 difference = countNumberOfSteps(floor);
             }
 
 
             if (isDestinationToAdd) {
+                decreasingBounds = getBounds(Direction.DOWN);
+
                 int destination = floor + offset;
                 int indexOfFloor = levels.indexOf(floor);
 
@@ -278,13 +296,24 @@ class Elevator {
                     }
                 }
             }
+
+            System.out.println(levels + "LVL WHEN DOWN");
+            System.out.println("down return" + difference);
             return difference;
         }
     }
 
 
-    int countNumberOfSteps(int floor) {
+    private int countNumberOfSteps(int floor) {
+        System.out.println("FLOOR IN COUNT FOR " + elevatorId);
+        System.out.println("LEVELS " + levels);
+
+        if (!levels.contains(floor)) {
+            return 1000;
+        }
+
         int indexOfFloor = levels.indexOf(floor);
+        System.out.println(indexOfFloor);
 
         int previous, actual;
         int result = 0;
@@ -292,6 +321,7 @@ class Elevator {
             previous = levels.get(i - 1);
             actual = levels.get(i);
             result += Math.abs(actual - previous);
+            System.out.println("COUNTING RESULT FOR " + elevatorId);
         }
 
         return result;

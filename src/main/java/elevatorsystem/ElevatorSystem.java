@@ -58,6 +58,9 @@ public class ElevatorSystem {
         for (Elevator elevator : elevatorsCopy) {
             int pickupTime = elevator.pickup(floor, 0, false);
 
+            System.out.println("EXAMPLE");
+            System.out.println("pickup time: " + pickupTime + " elevator id: " + elevator.getElevatorId());
+
             if (pickupTime < numberOfSteps) {
                 numberOfSteps = pickupTime;
                 elevatorId = elevator.getElevatorId();
@@ -77,9 +80,12 @@ public class ElevatorSystem {
      * @see Elevator
      */
     void pickup(int floor, int offset) {
-        Pair<Integer, Integer> bestElevator = getElevatorAndSteps(floor);
-        int elevatorId = bestElevator.getFirst();
+        Pair<Integer, Integer> bestElevatorStatus = getElevatorAndSteps(floor);
+        int elevatorId = bestElevatorStatus.getFirst();
 
+        System.out.println("best elevator id: " + bestElevatorStatus.getFirst() + " steps " + bestElevatorStatus.getSecond());
+
+        System.out.println("REAL");
         elevators.get(elevatorId).pickup(floor, 0, false);
         elevators.get(elevatorId).pickup(floor, offset, true);
     }
