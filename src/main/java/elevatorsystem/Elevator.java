@@ -5,6 +5,7 @@ import java.util.LinkedList;
 /**
  * Class that contains information about elevator
  * in addition to necessary methods that make usage of the program possible
+ *
  * @see ElevatorSystem
  * @see ElevatorStatus
  */
@@ -54,35 +55,13 @@ class Elevator {
 
 
     /**
-     * Returns elevator status for
-     *
-     * @return
-     * @see ElevatorStatus
+     * Does the step operation for the elevator -
+     * if the list of levels to visit is empty nothing happens
+     * if the the direction of elevator is equal to Direction.DOWN then the elevator moves one level down
+     * similarly when Direction.UP - the elevator moves one level up
      */
-    public ElevatorStatus generateStatus() {
-        return new ElevatorStatus();
-    }
-
-
-    /**
-     * Returns current direction of the elevator
-     *
-     * @return current direction of the elevator
-     */
-    Direction getDirection() {
-        if (levels.isEmpty()) {
-            return Direction.NONE;
-        }
-        if (currentLevel - levels.getFirst() < 0) {
-            return Direction.UP;
-        }
-
-        return Direction.DOWN;
-    }
-
-
     public void step() {
-        if (levels.size() == 0) return;
+        if (levels.isEmpty()) return;
 
         if (getDirection() == Direction.DOWN) {
             --currentLevel;
@@ -99,34 +78,22 @@ class Elevator {
     }
 
 
-    int countNumberOfSteps(int floor) {
-        int indexOfFloor = levels.indexOf(floor);
-
-        int previous, actual;
-        int result = 0;
-        for (int i = 1; i < indexOfFloor; ++i) {
-            previous = levels.get(i - 1);
-            actual = levels.get(i);
-            result += Math.abs(actual - previous);
-        }
-
-        return result;
-    }
-
-
     int pickup(int floor, int offset, boolean isDestinationToAdd) {
         if (getDirection() == Direction.NONE) {
             int difference = getFloorDifference(floor, currentLevel);
-            if (levels.isEmpty()) {
-                levels.add(floor);
-            } else {
-                if (getFloorDifference(floor, currentLevel) < getFloorDifference(levels.getFirst(), currentLevel)) {
-                    levels.addFirst(floor);
+
+            if (!isDestinationToAdd) {
+                if (levels.isEmpty()) {
+                    levels.add(floor);
                 } else {
-                    for (int i = 0; i < levels.size(); ++i) {
-                        if (getFloorDifference(floor, currentLevel) < getFloorDifference(levels.get(i), currentLevel)) {
-                            levels.add(i, floor);
-                            break;
+                    if (getFloorDifference(floor, currentLevel) < getFloorDifference(levels.getFirst(), currentLevel)) {
+                        levels.addFirst(floor);
+                    } else {
+                        for (int i = 0; i < levels.size(); ++i) {
+                            if (getFloorDifference(floor, currentLevel) < getFloorDifference(levels.get(i), currentLevel)) {
+                                levels.add(i, floor);
+                                break;
+                            }
                         }
                     }
                 }
@@ -148,10 +115,13 @@ class Elevator {
                 }
             }
 
+            System.out.println("diff" + difference);
             return difference;
 
         } else if (getDirection() == Direction.UP) {
-            Pair<Integer, Integer> increasingBounds = getBounds(1);
+            int difference = 100;
+
+            Pair<Integer, Integer> increasingBounds = getBounds(Direction.UP);
 
             if (!isDestinationToAdd) {
 
@@ -180,6 +150,7 @@ class Elevator {
                         }
                     }
                 }
+                difference = countNumberOfSteps(floor);
             }
 
             if (isDestinationToAdd) {
@@ -225,8 +196,12 @@ class Elevator {
                 }
             }
 
-        } else if (getDirection() == Direction.DOWN) {
-            Pair<Integer, Integer> decreasingBounds = getBounds(-1);
+            return difference;
+
+        } else {
+            int difference = 100;
+
+            Pair<Integer, Integer> decreasingBounds = getBounds(Direction.DOWN);
 
             if (!isDestinationToAdd) {
                 if (isBetweenBounds(decreasingBounds, floor, false)) {
@@ -258,6 +233,7 @@ class Elevator {
                         }
                     }
                 }
+                difference = countNumberOfSteps(floor);
             }
 
 
@@ -302,8 +278,23 @@ class Elevator {
                     }
                 }
             }
+            return difference;
         }
-        return countNumberOfSteps(floor);
+    }
+
+
+    int countNumberOfSteps(int floor) {
+        int indexOfFloor = levels.indexOf(floor);
+
+        int previous, actual;
+        int result = 0;
+        for (int i = 1; i <= indexOfFloor; ++i) {
+            previous = levels.get(i - 1);
+            actual = levels.get(i);
+            result += Math.abs(actual - previous);
+        }
+
+        return result;
     }
 
 
@@ -321,8 +312,8 @@ class Elevator {
     }
 
 
-    private Pair<Integer, Integer> getBounds(int direction) {
-        int startIndex = levels.size() - 1, endIndex = levels.size() - 1;
+    private Pair<Integer, Integer> getBounds(Direction direction) {
+        int startIndex = 0, endIndex = levels.size() - 1;
         boolean isRising = false;
         boolean isDecreasing = false;
 
@@ -331,7 +322,7 @@ class Elevator {
             int previous = levels.get(i - 1);
             int actual = levels.get(i);
 
-            if (direction == 1) {
+            if (direction == Direction.UP) {
                 if (actual > previous) {
                     if (!isRising) {
                         startIndex = i - 1;
@@ -341,7 +332,7 @@ class Elevator {
                     endIndex = i - 1;
                     break;
                 }
-            } else if (direction == -1) {
+            } else if (direction == Direction.DOWN) {
                 if (actual < previous) {
                     if (!isDecreasing) {
                         startIndex = i - 1;
@@ -359,12 +350,40 @@ class Elevator {
 
 
     /**
+     * Returns current direction of the elevator
+     *
+     * @return current direction of the elevator
+     */
+    Direction getDirection() {
+        if (levels.isEmpty()) {
+            return Direction.NONE;
+        }
+        if (currentLevel - levels.getFirst() < 0) {
+            return Direction.UP;
+        }
+
+        return Direction.DOWN;
+    }
+
+
+    /**
      * Enum that contains fields that specify the direction of the elevator
      */
     enum Direction {
         UP,
         DOWN,
         NONE
+    }
+
+
+    /**
+     * Returns the status of the elevator -
+     *
+     * @return current status of the elevator
+     * @see ElevatorStatus
+     */
+    public ElevatorStatus generateStatus() {
+        return new ElevatorStatus();
     }
 
 
