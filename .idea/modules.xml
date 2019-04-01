@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ElevatorSystem.iml" filepath="$PROJECT_DIR$/ElevatorSystem.iml" group="ElevatorSystem" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/ElevatorSystem_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ElevatorSystem_main.iml" group="ElevatorSystem" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ElevatorSystem_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ElevatorSystem_test.iml" group="ElevatorSystem" />
     </modules>
   </component>
 </project>
