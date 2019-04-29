@@ -31,6 +31,7 @@ Otherwise, there are pickup method steps:
    a) if the floor is within the bounds of the sublist (floor > 2 and floor < 8) and the sublist does not contain the floor         then we look for the place to insert the floor into the levels list - for instance:
       - floor is equal to 5 so it is withing bounds (5 > 2 and 5 < 8) and the sublist does not contain 5 (5 != 2 and 5 != 3         and 5 != 7 and 5 != 8) -
       the floor is being added to the list in a suitable position (for example above levels list after insertion of 5 looks         like: [2,3,5,7,8,4]
+      
    b) otherwise, if the currentLevel < floor, then floor is being added at the beginning of the list
                  if not, floor is being added just after the increasing sub list
 
@@ -38,6 +39,7 @@ Otherwise, there are pickup method steps:
    - similarly to the situation when elevator is going UP, there is now need to theck if there is a sublist of levels that      are decreasing e.g. for list [6,5,3,7,8] the decreasing sublist is: [6,5,3]
    
    a) if the floor is between bounds and sublist does not contain the floor - the floor is being added to the list in a             suitable position for instance - when the floor = 4, the list after inserting is: [6,5,4,3,7,8]
+   
    b) otherwise, if the currentLevel > floor, then floor is being added at the beginning of the list
                  if not, floor is being added just after the decreasing sub list
 
@@ -51,11 +53,13 @@ All important methods are described by means of java docs
 
 ## Usage 
 To run the project you may use / generate a shadow jar file (Gradle -> Tasks -> shadow -> shadowJar) and run it with command:
+```bash
 java -jar ElevatorSystem-all.jar
+```
 or just run it by means of IntelliJ. 
 
 Then you need to just follow the instructions.
 
 You can see exemplary usage of the program below:
 
-[![asciicast](https://asciinema.org/a/2aV0VJIeYUfNyT7wCCbQaJXmV.svg)](https://asciinema.org/a/2aV0VJIeYUfNyT7wCCbQaJXmV)
+[![asciicast](https://asciinema.org/a/243412.svg)](https://asciinema.org/a/243412)
